@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sisk DPP Portal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--surface:#f8f8f6;--surface2:#f0f0ed;
+  --border:#e8e8e4;--text:#1a1a18;--text2:#6b6b65;--text3:#9b9b95;
+  --teal:#0d7377;--teal2:#00967F;--teal-light:#f0fbfb;
+  --amber:#b45309;--amber-light:#fef9f0;
+  --green:#2d7d4f;--red:#c0392b;
+  --navy:#0B1E3D;
+  --sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6}
+
+/* HEADER */
+.header{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.dpp-badge{background:var(--teal);color:white;font-family:var(--mono);font-size:10px;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:0.08em;text-transform:uppercase}
+.header-title{font-size:13px;color:rgba(255,255,255,0.6)}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;color:#00BFA6;font-weight:500}
+.live-dot{width:8px;height:8px;background:#00BFA6;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* SCAN BAR */
+.scan-bar{background:var(--navy);border-bottom:1px solid rgba(255,255,255,0.08);padding:10px 24px;text-align:center;font-size:12px;color:rgba(255,255,255,0.5)}
+.scan-bar strong{color:#00BFA6}
+
+/* NAV TABS */
+.nav{background:white;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0;overflow-x:auto}
+.nav-tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* MAIN */
+.main{max-width:960px;margin:0 auto;padding:32px 24px}
+
+/* HERO */
+.hero{margin-bottom:32px}
+.project-tag{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px}
+.building-name{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:6px}
+.building-sub{font-size:14px;color:var(--text2);margin-bottom:24px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.stat-number{font-family:var(--mono);font-size:26px;font-weight:600;color:var(--teal);line-height:1}
+.stat-label{font-size:11px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:0.06em}
+
+/* QR BANNER */
+.qr-banner{background:var(--navy);border-radius:12px;padding:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:32px}
+.qr-img{width:100px;height:100px;border-radius:8px;flex-shrink:0;background:white;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qr-img img{width:100px;height:100px;display:block}
+.qr-info h3{font-size:16px;font-weight:600;color:white;margin-bottom:6px}
+.qr-info p{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:10px}
+.qr-url{font-family:var(--mono);font-size:11px;color:#00BFA6;background:rgba(0,191,166,0.1);padding:6px 12px;border-radius:4px;display:inline-block}
+.vision-btn{background:white;color:var(--navy);padding:10px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0}
+
+/* FLOOR PLAN */
+.plan-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px}
+.plan-label{font-size:12px;color:var(--text3);margin-bottom:16px;font-family:var(--mono)}
+.plan-svg{width:100%;height:auto}
+.plan-hint{text-align:center;margin-top:12px;font-size:12px;color:var(--text3)}
+
+/* ASSET GRID */
+.grid-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.grid-label{font-size:13px;color:var(--text2)}
+.filter-tabs{display:flex;gap:4px}
+.filter-tab{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:white;color:var(--text2);transition:all 0.15s}
+.filter-tab.active,.filter-tab:hover{background:var(--text);color:white;border-color:var(--text)}
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:24px}
+.asset-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:box-shadow 0.2s,transform 0.2s;background:white;text-decoration:none;color:inherit;display:block}
+.asset-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.08);transform:translateY(-2px)}
+.card-visual{background:var(--surface);height:160px;display:flex;align-items:center;justify-content:center;position:relative}
+.card-badge{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;font-weight:500}
+.badge-complete{background:#dcfce7;color:var(--green)}
+.badge-pending{background:#fef3c7;color:var(--amber)}
+.card-body{padding:14px}
+.card-type{font-size:11px;color:var(--text3);margin-bottom:4px;font-family:var(--mono)}
+.card-name{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.3}
+.card-mfr{font-size:12px;color:var(--text2);margin-bottom:10px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.card-carbon{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--teal)}
+.card-arrow{font-size:14px;color:var(--text3)}
+
+/* DETAIL PANEL */
+.detail-panel{background:white;border:1px solid var(--border);border-radius:12px;padding:24px;display:none;margin-bottom:24px}
+.detail-panel.show{display:block}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px}
+.detail-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.detail-mfr{font-size:13px;color:var(--text2);margin-top:3px}
+.close-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;flex-shrink:0}
+.close-btn:hover{color:var(--text)}
+.stakeholder-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.stab{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:white;transition:all 0.15s}
+.stab:hover{color:var(--text);border-color:var(--text2)}
+.stab.active{background:var(--teal);color:white;border-color:var(--teal)}
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.data-grid{grid-template-columns:1fr}}
+.data-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.data-card.highlight{border-left:3px solid var(--teal)}
+.data-card.full{grid-column:1/-1}
+.dc-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px;font-family:var(--mono)}
+.dc-value{font-size:13px;color:var(--text);font-weight:500}
+.dc-value.mono{font-family:var(--mono);font-size:12px;color:var(--teal)}
+.carbon-hero{background:var(--teal-light);border:1px solid var(--teal);border-radius:10px;padding:20px;margin-bottom:12px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.carbon-num{font-family:var(--mono);font-size:44px;font-weight:600;color:var(--teal);line-height:1}
+.carbon-unit{font-size:13px;color:var(--text2);margin-top:3px}
+.carbon-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.carbon-desc strong{color:var(--text)}
+
+/* JOURNEY */
+.journey{display:flex;flex-direction:column;gap:0}
+.j-item{display:flex;gap:14px;padding-bottom:18px;position:relative}
+.j-item:last-child{padding-bottom:0}
+.j-dot{width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:4px;position:relative;z-index:1}
+.j-item:not(:last-child) .j-dot::after{content:'';position:absolute;left:4px;top:10px;width:1px;height:calc(100% + 8px);background:var(--border)}
+.j-phase{font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px;font-family:var(--mono)}
+.j-title{font-size:14px;color:var(--text);font-weight:600;margin-bottom:2px}
+.j-desc{font-size:13px;color:var(--text2)}
+
+/* PATHWAY */
+.pathway-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+@media(max-width:580px){.pathway-grid{grid-template-columns:1fr}}
+.pathway-card{border:1px solid var(--border);border-radius:10px;padding:20px}
+.pathway-card.standard{border-left:3px solid var(--green)}
+.pathway-card.bespoke{border-left:3px solid var(--amber)}
+.pathway-type{font-size:11px;font-family:var(--mono);margin-bottom:8px}
+.pathway-type.standard{color:var(--green)}
+.pathway-type.bespoke{color:var(--amber)}
+.pathway-title{font-size:15px;font-weight:600;margin-bottom:10px}
+.pathway-steps{list-style:none}
+.pathway-steps li{font-size:13px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:8px}
+.pathway-steps li:last-child{border-bottom:none}
+.step-n{font-family:var(--mono);font-size:10px;color:var(--text3);flex-shrink:0;margin-top:2px;min-width:18px}
+
+/* QR SECTION */
+.qr-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.qr-box{width:140px;height:140px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+.qr-box img{width:140px;height:140px;display:block}
+.qr-info h3{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+.qr-info p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.qr-url{font-family:var(--mono);font-size:11px;color:var(--teal);background:var(--teal-light);padding:8px 12px;border-radius:6px;display:inline-block;word-break:break-all}
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+@media(max-width:500px){.how-grid{grid-template-columns:1fr}}
+
+/* COMPLIANCE */
+.compliance-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.compliance-grid{grid-template-columns:1fr}}
+.comp-card{border:1px solid var(--border);border-radius:8px;padding:16px}
+.comp-card.full{grid-column:1/-1}
+.comp-status{font-size:13px;font-weight:600;margin-bottom:4px}
+.comp-status.complete{color:var(--green)}
+.comp-status.progress{color:var(--amber)}
+.comp-note{font-size:12px;color:var(--text2)}
+.roadmap{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rm-phase{flex:1;min-width:140px;background:var(--surface);border-radius:8px;padding:14px}
+.rm-phase.active{background:var(--navy);color:white}
+.rm-tag{font-size:10px;font-family:var(--mono);margin-bottom:5px;opacity:0.6}
+.rm-title{font-size:13px;font-weight:600}
+.rm-desc{font-size:11px;margin-top:3px;opacity:0.7}
+
+/* SECTION TITLE */
+.section-title{font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px;font-family:var(--mono)}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* VIEW */
+.view{display:none}.view.active{display:block}
+
+/* FOOTER */
+.footer{border-top:1px solid var(--border);padding:20px 24px;max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-left{font-size:12px;color:var(--text2)}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:10px;font-family:var(--mono);padding:3px 8px;border-radius:4px;border:1px solid var(--border);color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="dpp-badge">DPP Portal</div>
+    <div class="header-title">John Sisk & Son — Asset Information Model</div>
+  </div>
+  <div class="live"><div class="live-dot"></div>Live DPP Record</div>
+</div>
+
+<div class="scan-bar">
+  Accessed via <strong>GS1 Digital Link</strong> scan · Powered by Sisk Digital Project Delivery · ISO 19650-3 Compliant
+</div>
+
+<div class="nav">
+  <div class="nav-tab active" onclick="showView('assets',this)">Asset Register</div>
+  <div class="nav-tab" onclick="showView('journey',this)">Stakeholder Journey</div>
+  <div class="nav-tab" onclick="showView('qr',this)">GS1 Digital Link</div>
+  <div class="nav-tab" onclick="showView('compliance',this)">DPP Compliance</div>
+</div>
+
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="project-tag">BIM Consultancy Placement · John Sisk & Son · August 2026</div>
+    <div class="building-name">Sisk DPP Asset Information Model</div>
+    <div class="building-sub">GS1 Digital Link integrated · COBie enriched · EU ESPR compliant · Dalux CDE hosted</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-number">18</div><div class="stat-label">Total Doors</div></div>
+    <div class="stat"><div class="stat-number">15</div><div class="stat-label">Total Windows</div></div>
+    <div class="stat"><div class="stat-number">8</div><div class="stat-label">DPP Parameters</div></div>
+    <div class="stat"><div class="stat-number" style="color:var(--amber)">67%</div><div class="stat-label">DPP Complete</div></div>
+  </div>
+
+  <!-- QR BANNER -->
+  <div style="text-align:center;padding:24px 0 8px">
+    <img src="qr-code.png" alt="GS1 Digital Link QR Code" onerror="this.src='https://raw.githubusercontent.com/Oluwanifemidan/sisk-dpp-portal/main/qr-code.png'" style="width:140px;height:140px;display:block;margin:0 auto 12px;border-radius:8px"/>
+    <div style="font-size:14px;font-weight:600;color:var(--text)">Scan to access this DPP portal</div>
+  </div>
+
+  <!-- ASSET REGISTER VIEW -->
+  <div id="view-assets" class="view active">
+
+    <!-- FLOOR PLAN -->
+    <div class="plan-wrap">
+      <div class="plan-label">BUILDING FLOOR PLAN — click any asset to view DPP record</div>
+      <svg class="plan-svg" viewBox="0 0 760 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="30" width="680" height="340" rx="2" stroke="#1a1a18" stroke-width="3" fill="white"/>
+        <line x1="280" y1="30" x2="280" y2="370" stroke="#1a1a18" stroke-width="2"/>
+        <line x1="520" y1="30" x2="520" y2="370" stroke="#1a1a18" stroke-width="2"/>
+        <line x1="280" y1="200" x2="520" y2="200" stroke="#1a1a18" stroke-width="2"/>
+        <text x="160" y="210" text-anchor="middle" fill="#9b9b95" font-size="12" font-family="Inter">Room A</text>
+        <text x="400" y="125" text-anchor="middle" fill="#9b9b95" font-size="12" font-family="Inter">Room B</text>
+        <text x="400" y="300" text-anchor="middle" fill="#9b9b95" font-size="12" font-family="Inter">Room C</text>
+        <text x="620" y="210" text-anchor="middle" fill="#9b9b95" font-size="12" font-family="Inter">Room D</text>
+        <!-- Door 1 -->
+        <a href="door-1.html"><g style="cursor:pointer"><rect x="40" y="145" width="8" height="50" fill="#0d7377"/><path d="M48 145 A50 50 0 0 1 98 195" stroke="#0d7377" stroke-width="1.5" fill="rgba(13,115,119,0.1)" stroke-dasharray="4 2"/><circle cx="44" cy="170" r="12" fill="#0d7377"/><text x="44" y="174" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">D1</text></g></a>
+        <!-- Door 2 -->
+        <a href="door-2.html"><g style="cursor:pointer"><rect x="300" y="30" width="50" height="8" fill="#0d7377"/><path d="M300 38 A50 50 0 0 0 350 88" stroke="#0d7377" stroke-width="1.5" fill="rgba(13,115,119,0.1)" stroke-dasharray="4 2"/><circle cx="325" cy="34" r="12" fill="#0d7377"/><text x="325" y="38" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">D2</text></g></a>
+        <!-- Door 4 - Aluprof -->
+        <a href="door-4.html"><g style="cursor:pointer"><rect x="530" y="30" width="50" height="8" fill="#b45309"/><path d="M530 38 A50 50 0 0 0 580 88" stroke="#b45309" stroke-width="1.5" fill="rgba(180,83,9,0.1)" stroke-dasharray="4 2"/><circle cx="555" cy="34" r="12" fill="#b45309"/><text x="555" y="38" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">D4</text></g></a>
+        <!-- Door 5 - EI60 -->
+        <a href="door-5.html"><g style="cursor:pointer"><rect x="530" y="240" width="50" height="8" fill="#b45309"/><path d="M530 248 A50 50 0 0 0 580 298" stroke="#b45309" stroke-width="1.5" fill="rgba(180,83,9,0.1)" stroke-dasharray="4 2"/><circle cx="555" cy="244" r="12" fill="#b45309"/><text x="555" y="248" text-anchor="middle" fill="white" font-size="8" font-weight="600" font-family="Inter">EI60</text></g></a>
+        <!-- Window 1 -->
+        <a href="window-1.html"><g style="cursor:pointer"><rect x="80" y="26" width="80" height="8" fill="#1a1a18"/><rect x="85" y="27" width="70" height="6" fill="rgba(186,230,253,0.7)"/><line x1="120" y1="26" x2="120" y2="34" stroke="#1a1a18" stroke-width="1"/><circle cx="120" cy="30" r="12" fill="#0d7377"/><text x="120" y="34" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">W1</text></g></a>
+        <!-- Window 2 -->
+        <a href="window-2.html"><g style="cursor:pointer"><rect x="340" y="26" width="80" height="8" fill="#1a1a18"/><rect x="345" y="27" width="70" height="6" fill="rgba(186,230,253,0.7)"/><line x1="380" y1="26" x2="380" y2="34" stroke="#1a1a18" stroke-width="1"/><circle cx="380" cy="30" r="12" fill="#0d7377"/><text x="380" y="34" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">W2</text></g></a>
+        <!-- Window 3 -->
+        <a href="window-1.html"><g style="cursor:pointer"><rect x="716" y="130" width="8" height="80" fill="#1a1a18"/><rect x="717" y="135" width="6" height="70" fill="rgba(186,230,253,0.7)"/><circle cx="720" cy="170" r="12" fill="#0d7377"/><text x="720" y="174" text-anchor="middle" fill="white" font-size="9" font-weight="600" font-family="Inter">W3</text></g></a>
+        <!-- Legend -->
+        <rect x="50" y="348" width="10" height="10" fill="#0d7377" rx="2"/>
+        <text x="66" y="358" fill="#9b9b95" font-size="11" font-family="Inter">Timber door</text>
+        <rect x="180" y="348" width="10" height="10" fill="#b45309" rx="2"/>
+        <text x="196" y="358" fill="#9b9b95" font-size="11" font-family="Inter">Aluprof fire door</text>
+        <rect x="330" y="348" width="10" height="10" fill="#0d7377" rx="2" opacity="0.5"/>
+        <text x="346" y="358" fill="#9b9b95" font-size="11" font-family="Inter">Window (Reynaers)</text>
+      </svg>
+      <div class="plan-hint">Click any element on the plan to view its Digital Product Passport</div>
+    </div>
+
+    <!-- ASSET GRID -->
+    <div class="grid-header">
+      <div class="grid-label">All assets</div>
+      <div class="filter-tabs">
+        <div class="filter-tab active" onclick="filterAssets('all',this)">All</div>
+        <div class="filter-tab" onclick="filterAssets('door',this)">Doors</div>
+        <div class="filter-tab" onclick="filterAssets('window',this)">Windows</div>
+      </div>
+    </div>
+
+    <div class="asset-grid" id="assetGrid">
+      <a href="door-1.html" class="asset-card" data-type="door"><div class="card-visual"><svg viewBox="0 0 80 100" width="60"><rect x="10" y="5" width="60" height="90" rx="3" stroke="#0d7377" stroke-width="2.5" fill="white"/><rect x="10" y="5" width="60" height="90" rx="3" fill="#f0fbfb"/><circle cx="62" cy="52" r="4" fill="#0d7377"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Internal Door · Constable Doors</div><div class="card-name">1010 × 2110 mm</div><div class="card-mfr">Timber core, FSC certified</div><div class="card-footer"><div class="card-carbon">85 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-2.html" class="asset-card" data-type="door"><div class="card-visual"><svg viewBox="0 0 80 100" width="60"><rect x="10" y="5" width="60" height="90" rx="3" stroke="#0d7377" stroke-width="2.5" fill="white"/><rect x="10" y="5" width="60" height="90" rx="3" fill="#f0fbfb"/><circle cx="62" cy="52" r="4" fill="#0d7377"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Internal Door · Constable Doors</div><div class="card-name">810 × 2110 mm</div><div class="card-mfr">Timber core, FSC certified</div><div class="card-footer"><div class="card-carbon">72 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-3.html" class="asset-card" data-type="door"><div class="card-visual"><svg viewBox="0 0 80 100" width="60"><rect x="10" y="5" width="60" height="90" rx="3" stroke="#0d7377" stroke-width="2.5" fill="white"/><rect x="10" y="5" width="60" height="90" rx="3" fill="#f0fbfb"/><circle cx="62" cy="52" r="4" fill="#0d7377"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Internal Door · Constable Doors</div><div class="card-name">Door Type 3/4</div><div class="card-mfr">Timber core, FSC certified</div><div class="card-footer"><div class="card-carbon">78 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-4.html" class="asset-card" data-type="door"><div class="card-visual" style="background:#fef9f0"><svg viewBox="0 0 80 100" width="60"><rect x="5" y="5" width="70" height="90" rx="2" stroke="#b45309" stroke-width="2.5" fill="white"/><rect x="5" y="5" width="70" height="90" rx="2" fill="#fef9f0"/><rect x="8" y="8" width="64" height="84" rx="1" stroke="#b45309" stroke-width="1" fill="none" stroke-dasharray="3 2"/><circle cx="64" cy="52" r="4" fill="#b45309"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Aluminium Door · ALUPROF SA</div><div class="card-name">MB-45 · 1800 × 2100 mm</div><div class="card-mfr">Aluminium, thermally broken</div><div class="card-footer"><div class="card-carbon">45 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-5.html" class="asset-card" data-type="door"><div class="card-visual" style="background:#fef9f0"><svg viewBox="0 0 80 100" width="60"><rect x="5" y="5" width="70" height="90" rx="2" stroke="#b45309" stroke-width="2.5" fill="white"/><rect x="5" y="5" width="70" height="90" rx="2" fill="#fef9f0"/><text x="40" y="55" text-anchor="middle" fill="#b45309" font-size="11" font-family="Inter" font-weight="700">EI60</text><circle cx="64" cy="32" r="4" fill="#b45309"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Fire Door EI60 · ALUPROF SA</div><div class="card-name">MB-78EI · 1200 × 2000 mm</div><div class="card-mfr">Aluminium, fire rated EI60</div><div class="card-footer"><div class="card-carbon">52 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-6.html" class="asset-card" data-type="door"><div class="card-visual" style="background:#fef9f0"><svg viewBox="0 0 80 100" width="60"><rect x="5" y="5" width="70" height="90" rx="2" stroke="#b45309" stroke-width="2.5" fill="white"/><rect x="5" y="5" width="70" height="90" rx="2" fill="#fef9f0"/><text x="40" y="55" text-anchor="middle" fill="#b45309" font-size="11" font-family="Inter" font-weight="700">EI90</text><circle cx="64" cy="32" r="4" fill="#b45309"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Fire Door EI90 · ALUPROF SA</div><div class="card-name">MB-78EI · 1200 × 2000 mm</div><div class="card-mfr">Aluminium, fire rated EI90</div><div class="card-footer"><div class="card-carbon">58 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-7.html" class="asset-card" data-type="door"><div class="card-visual"><svg viewBox="0 0 80 100" width="60"><rect x="10" y="5" width="60" height="90" rx="3" stroke="#9b9b95" stroke-width="1.5" stroke-dasharray="5 3" fill="white"/></svg><div class="card-badge badge-pending">Pending</div></div><div class="card-body"><div class="card-type">Passage Door · Pending</div><div class="card-name">42" × 84"</div><div class="card-mfr">Manufacturer data requested</div><div class="card-footer"><div class="card-carbon" style="color:var(--text3)">—</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="door-8.html" class="asset-card" data-type="door"><div class="card-visual"><svg viewBox="0 0 120 100" width="80"><rect x="5" y="5" width="52" height="90" rx="3" stroke="#9b9b95" stroke-width="1.5" stroke-dasharray="5 3" fill="white"/><rect x="63" y="5" width="52" height="90" rx="3" stroke="#9b9b95" stroke-width="1.5" stroke-dasharray="5 3" fill="white"/></svg><div class="card-badge badge-pending">Pending</div></div><div class="card-body"><div class="card-type">Double Door · Pending</div><div class="card-name">Door-Passage-Double</div><div class="card-mfr">Manufacturer data requested</div><div class="card-footer"><div class="card-carbon" style="color:var(--text3)">—</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="window-1.html" class="asset-card" data-type="window"><div class="card-visual" style="background:#f0f8ff"><svg viewBox="0 0 100 80" width="70"><rect x="10" y="10" width="80" height="60" rx="2" stroke="#0d7377" stroke-width="2.5" fill="white"/><rect x="10" y="10" width="80" height="60" rx="2" fill="rgba(186,230,253,0.4)"/><line x1="50" y1="10" x2="50" y2="70" stroke="#0d7377" stroke-width="2"/><line x1="10" y1="40" x2="90" y2="40" stroke="#0d7377" stroke-width="2"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Window · Reynaers Aluminium</div><div class="card-name">Window Type 1</div><div class="card-mfr">Aluminium, double glazed</div><div class="card-footer"><div class="card-carbon">35 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="window-2.html" class="asset-card" data-type="window"><div class="card-visual" style="background:#f0f8ff"><svg viewBox="0 0 100 80" width="70"><rect x="10" y="10" width="80" height="60" rx="2" stroke="#0d7377" stroke-width="2.5" fill="white"/><rect x="10" y="10" width="80" height="60" rx="2" fill="rgba(186,230,253,0.4)"/><line x1="50" y1="10" x2="50" y2="70" stroke="#0d7377" stroke-width="2"/></svg><div class="card-badge badge-complete">Complete</div></div><div class="card-body"><div class="card-type">Window · Reynaers Aluminium</div><div class="card-name">Window Type 2</div><div class="card-mfr">Aluminium, double glazed</div><div class="card-footer"><div class="card-carbon">38 kgCO₂e</div><div class="card-arrow">→</div></div></div></a>
+
+      <a href="window-3.html" class="asset-card" data-type="window"><div class="card-visual" style="background:#f8f8f6"><svg viewBox="0 0 100 80" width="70"><rect x="10" y="10" width="80" height="60" rx="2" stroke="#9b9b95" stroke-width="1.5" stroke-dasharray="5 3" fill="white"/><rect x="10" y="10" width="80" height="60" rx="2" fill="rgba(186,230,253,0.1)"/></svg><div class="card-badge badge-pending">Pending</div></div><div class="card-body"><div class="card-type">Window · Pending</div><div class="card-name">Window Type 3</div><div class="card-mfr">Manufacturer data requested</div><div class="card-footer"><div class="card-carbon" style="color:var(--text3)">—</div><div class="card-arrow">→</div></div></div></a>
+    </div>
+  </div>
+
+  <!-- STAKEHOLDER JOURNEY VIEW -->
+  <div id="view-journey" class="view">
+    <div class="section-title">Asset lifecycle — full stakeholder journey</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+      <div class="journey">
+        <div class="j-item"><div class="j-dot"></div><div><div class="j-phase">Stage 1 — Manufacturer</div><div class="j-title">Product manufactured · GTIN registered · EPD commissioned</div><div class="j-desc">ALUPROF SA registers MB-45 and MB-78EI GTINs with GS1. Constable Doors provides FSC certified timber doors with EPD. Carbon data: A1–A3 cradle to gate.</div></div></div>
+        <div class="j-item"><div class="j-dot"></div><div><div class="j-phase">Stage 2 — Designer</div><div class="j-title">Product specified in BIM · DPP parameters added to Revit families</div><div class="j-desc">GS1 GTIN, EPD reference, embodied carbon, material composition, Declaration of Performance added as shared parameters to Revit door and window families. COBie template extended to include DPP fields.</div></div></div>
+        <div class="j-item"><div class="j-dot"></div><div><div class="j-phase">Stage 3 — Contractor (Sisk)</div><div class="j-title">DPP data verified at technical submittal · IFC exported to Dalux CDE</div><div class="j-desc">Sisk verifies supplier GTIN against GS1 registry at ITT stage. Enriched IFC exported from Revit with all DPP parameters. Uploaded to Dalux CDE under EU replacement folder. GS1 Digital Link QR code generated and affixed to physical asset on site.</div></div></div>
+        <div class="j-item"><div class="j-dot"></div><div><div class="j-phase">Stage 4 — Installation</div><div class="j-title">QR code scanned on site · Physical asset linked to AIM record</div><div class="j-desc">Site team scans GS1 Digital Link QR code on door or window. Scan resolves to this DPP record — confirming correct product installed, carbon data recorded, compliance verified at point of installation.</div></div></div>
+        <div class="j-item"><div class="j-dot"></div><div><div class="j-phase">Stage 5 — Handover</div><div class="j-title">COBie exported with DPP fields · AIM handed over to client</div><div class="j-desc">Full COBie output includes DPP parameters. Dalux AIM handed to client FM team. Golden Thread requirement satisfied under UK BSA 2022. EU ESPR DPP mandate fulfilled.</div></div></div>
+        <div class="j-item"><div class="j-dot" style="background:var(--text3)"></div><div><div class="j-phase">Stage 6 — Operation · FM Team</div><div class="j-title">Scan-to-record for maintenance · End of life data accessible</div><div class="j-desc">FM team scans QR code during maintenance visits. Full asset history, warranty status, and maintenance schedule retrieved instantly. At end of building life — material composition and recycling classification enables circular economy decisions.</div></div></div>
+      </div>
+    </div>
+
+    <div class="section-title">Standard vs bespoke product pathways</div>
+    <div class="pathway-grid">
+      <div class="pathway-card standard">
+        <div class="pathway-type standard">Standard pathway</div>
+        <div class="pathway-title">Off-the-shelf product</div>
+        <ul class="pathway-steps">
+          <li><span class="step-n">01</span>GTIN already registered with GS1 registry</li>
+          <li><span class="step-n">02</span>Sisk mandates GTIN in ITT documentation</li>
+          <li><span class="step-n">03</span>Supplier provides GTIN + EPD at technical submittal</li>
+          <li><span class="step-n">04</span>Sisk enters data into Revit shared parameters</li>
+          <li><span class="step-n">05</span>COBie exports DPP data into Dalux AIM</li>
+          <li><span class="step-n">06</span>GS1 Digital Link QR affixed to physical asset</li>
+        </ul>
+      </div>
+      <div class="pathway-card bespoke">
+        <div class="pathway-type bespoke">Bespoke pathway</div>
+        <div class="pathway-title">Custom manufactured product</div>
+        <ul class="pathway-steps">
+          <li><span class="step-n">01</span>No GTIN exists — custom product</li>
+          <li><span class="step-n">02</span>Sisk mandates DPP data in ITT — extended lead time</li>
+          <li><span class="step-n">03</span>Manufacturer registers new GTIN with GS1</li>
+          <li><span class="step-n">04</span>Manufacturer commissions product-specific EPD</li>
+          <li><span class="step-n">05</span>Manufacturer establishes DPP hosting URL</li>
+          <li><span class="step-n">06</span>Then follows standard pathway above</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GS1 DIGITAL LINK VIEW -->
+  <div id="view-qr" class="view">
+    <div class="section-title">GS1 Digital Link — scan to access DPP</div>
+    <div class="qr-section">
+      <div class="qr-box"><img src="qr-code.png" alt="GS1 Digital Link QR Code" onerror="this.src='https://raw.githubusercontent.com/Oluwanifemidan/sisk-dpp-portal/main/qr-code.png'"/></div>
+      <div class="qr-info">
+        <h3>GS1 Digital Link QR Code</h3>
+        <p>Scan this QR code on site with any mobile device to access the full Digital Product Passport record for this asset. No proprietary app required — uses open GS1 standard (ISO/IEC 18004).</p>
+        <div class="qr-url">https://oluwanifemidan.github.io/sisk-dpp-portal/</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:24px">How GS1 Digital Link works</div>
+    <div class="how-grid">
+      <div class="data-card highlight"><div class="dc-label">Step 1 — Physical asset</div><div class="dc-value">QR code affixed to door or window on site</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Laser-etched stainless steel plate recommended for durability</div></div>
+      <div class="data-card highlight"><div class="dc-label">Step 2 — Scan</div><div class="dc-value">Any phone camera scans the QR code</div><div style="font-size:12px;color:var(--text3);margin-top:4px">No proprietary app required — works with native camera</div></div>
+      <div class="data-card highlight"><div class="dc-label">Step 3 — Resolution</div><div class="dc-value">URL resolves simultaneously to BIM element, COBie record, DPP data, EPD and O&M documents</div></div>
+      <div class="data-card highlight"><div class="dc-label">Step 4 — DPP record</div><div class="dc-value">Full asset data appears instantly</div><div style="font-size:12px;color:var(--text3);margin-top:4px">Available for minimum 10 years after installation per EU ESPR</div></div>
+    </div>
+  </div>
+
+  <!-- COMPLIANCE VIEW -->
+  <div id="view-compliance" class="view">
+    <div class="section-title">DPP compliance status</div>
+    <div class="compliance-grid">
+      <div class="comp-card"><div class="dc-label">EU ESPR Compliance</div><div class="comp-status progress">In Progress</div><div class="comp-note">DPP infrastructure established. GTIN pending from some suppliers.</div></div>
+      <div class="comp-card"><div class="dc-label">UK BSA Golden Thread</div><div class="comp-status complete">Satisfied</div><div class="comp-note">Continuous digital asset record from design to handover via Dalux CDE.</div></div>
+      <div class="comp-card"><div class="dc-label">ISO 19650-3</div><div class="comp-status complete">Compliant</div><div class="comp-note">AIM delivered via Dalux CDE with structured COBie output.</div></div>
+      <div class="comp-card"><div class="dc-label">GS1 Digital Link</div><div class="comp-status complete">Implemented</div><div class="comp-note">Open URI standard · Non-proprietary · Compatible with all systems.</div></div>
+      <div class="comp-card full">
+        <div class="dc-label">Technology roadmap</div>
+        <div class="roadmap">
+          <div class="rm-phase active"><div class="rm-tag">Phase 1 · Now</div><div class="rm-title">GS1 Digital Link + DPP</div><div class="rm-desc">This deployment</div></div>
+          <div class="rm-phase"><div class="rm-tag">Phase 2 · Years 4–7</div><div class="rm-title">IoT Integration</div><div class="rm-desc">Dynamic AIM updates</div></div>
+          <div class="rm-phase"><div class="rm-tag">Phase 3 · Years 8+</div><div class="rm-title">Agentic AI</div><div class="rm-desc">Proactive maintenance</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-left">John Sisk & Son Ltd · Digital Project Delivery · Developed by Nifemi Dan-Ebbah · UWE Bristol · August 2026</div>
+  <div class="badges">
+    <div class="badge">EU ESPR</div>
+    <div class="badge">CPR 2024</div>
+    <div class="badge">BSA 2022</div>
+    <div class="badge">ISO 19650-3</div>
+    <div class="badge">GS1 Digital Link</div>
+  </div>
+</div>
+
+<script>
+function showView(v,el){
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  el.classList.add('active');
+}
+function filterAssets(type,el){
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.asset-card').forEach(card=>{
+    card.style.display=(type==='all'||card.dataset.type===type)?'block':'none';
+  });
+}
+</script>
+</body>
+</html>
